@@ -1,0 +1,21 @@
+{
+    "name": "jbmchd/jb-laravel-auth-jwt",
+    "description": "Adiciona autenticacao via JWTToken no jbmchd/jb-laravel-global",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Joabe Machado",
+            "email": "joabemachadodeabreu@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "jbmchd/jb-laravel-global": "dev-master",
+        "tymon/jwt-auth": "dev-develop"
+    },
+    "autoload": {
+        "psr-4": {
+            "JbAuthJwt\\": "src/"
+        }
+    }
+}
