@@ -26,12 +26,16 @@ class AuthService extends Service
 
     public function me($to_array=true)
     {
-        $auth = auth()->user();
-        $me = $auth->with(['usuario'])->find($auth->id);
-        if ($to_array) {
-            $me = $me->toArray();
+        try {
+            $auth = auth()->userOrFail();
+            $me = $auth->with(['usuario'])->find($auth->id);
+            if ($to_array) {
+                $me = $me->toArray();
+            }
+            return $me;
+        } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
+            throw new AuthException("Token não existe ou expirou");
         }
-        return $me;
     }
 
     public function logout()
@@ -42,7 +46,7 @@ class AuthService extends Service
 
     public function atualizarJwtToken()
     {
-        $novo_token = auth()->refresh();
+        $novo_token = auth()->refresh(true, true);
         return $novo_token;
     }
 

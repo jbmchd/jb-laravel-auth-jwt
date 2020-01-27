@@ -43,11 +43,12 @@ class MailResetPasswordNotification extends ResetPassword
             return call_user_func(static::$toMailCallback, $notifiable, $this->token);
         }
 
-        $url_parts = [env('APP_FRONTEND_URL', ''), 'auth', 'resetar-senha', $this->token];
+
+        $url_parts = [env('APP_FRONTEND_URL', request()->server('HTTP_HOST')), 'redefinir-senha', $this->token];
         $url = implode('/', $url_parts);
         return (new MailMessage)
                     ->subject('[AÇÃO NECESSÁRIA] - Redefinição de Senha Solicitada')
-                    ->line('Você recebeu este email porque houve uma solicitação para resetar a sua senha.')
+                    ->line('Você recebeu este email porque houve uma solicitação para redefinir a sua senha.')
                     ->action('Redefinir senha', $url)
                     ->line('Se você não solicitou este reset, apenas ignore este email.');
     }

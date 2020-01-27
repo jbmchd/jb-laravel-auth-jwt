@@ -9,7 +9,7 @@ use JbAuthJwt\Exceptions\AuthException;
 use JbGlobal\Repositories\PessoaRepository;
 use JbGlobal\Services\Service;
 
-class ResetarSenhaEmailService extends Service
+class RedefinirSenhaEmailService extends Service
 {
     use SendsPasswordResetEmails;
 
@@ -20,7 +20,7 @@ class ResetarSenhaEmailService extends Service
         $this->pessoa_repo = $pessoa_repo;
     }
 
-    public function resetarSenhaEmail($email)
+    public function redefinirSenhaEmail($email)
     {
         $Pessoa = $this->pessoa_repo->encontrarPor('email',$email);
         if ($Pessoa) {
@@ -49,10 +49,10 @@ class ResetarSenhaEmailService extends Service
 
     public function sendResetLinkFailedResponse()
     {
-        return ['erro'=>true, 'mensagem'=>'Falha ao enviar o email para resetar senha.'];
+        return ['erro'=>true, 'mensagem'=>'Falha ao enviar o email para redefinir senha.'];
     }
 
-    public function validarTokenSenha(array $credentials)
+    public function tokenValido(array $credentials)
     {
         $Pessoa = $this->getUser($credentials);
         if (!$Pessoa) {

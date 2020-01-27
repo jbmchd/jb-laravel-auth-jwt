@@ -5,31 +5,29 @@ namespace JbAuthJwt\Services\Auth;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Http\Request;
 
 use JbAuthJwt\Exceptions\AuthException;
 use JbGlobal\Repositories\UsuarioRepository;
 use JbGlobal\Services\Service;
 use JbGlobal\Services\UsuarioService;
 
-class ResetarSenhaService extends Service
+class RedefinirSenhaService extends Service
 {
     use ResetsPasswords;
 
     protected $usuario_repo;
     protected $usuario_servico;
-    protected $resetar_senha_email_servico;
+    protected $redefinir_senha_email_servico;
 
-    public function __construct(ResetarSenhaEmailService $resetar_senha_email_servico, UsuarioService $usuario_servico, UsuarioRepository $usuario_repo)
+    public function __construct(RedefinirSenhaEmailService $redefinir_senha_email_servico, UsuarioService $usuario_servico, UsuarioRepository $usuario_repo)
     {
-        $this->resetar_senha_email_servico = $resetar_senha_email_servico;
+        $this->redefinir_senha_email_servico = $redefinir_senha_email_servico;
         $this->usuario_servico = $usuario_servico;
         $this->usuario_repo = $usuario_repo;
     }
 
-    public function resetarSenha(Request $request)
+    public function redefinirSenha(array $credentials)
     {
-        $credentials = $request->only('email', 'senha', 'senha_confirmation', 'token');
         $Pessoa = $this->broker()->getUser(['email'=>$credentials['email']]);
         if ($Pessoa) {
             $token_valido = $this->broker()->tokenExists($Pessoa, $credentials['token']);
@@ -70,8 +68,9 @@ class ResetarSenhaService extends Service
 
     public function resetPassword($user, $senha)
     {
+        $usuario_id = $user->usuario->id;
         $senha_hash = $this->usuario_servico->criarSenha($senha);
-        $this->usuario_repo->alterarSenha($user, $senha_hash);
+        $this->usuario_repo->alterarSenha($usuario_id, $senha_hash);
         event(new PasswordReset($user));
     }
 
