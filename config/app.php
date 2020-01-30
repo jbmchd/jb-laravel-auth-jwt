@@ -3,7 +3,7 @@
 return [
 
     'providers' => [
-        JbAuthJwt\Providers\PasswordResetServiceProvider::class,
+		JbAuthJwt\Providers\PasswordResetServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
     ],
 

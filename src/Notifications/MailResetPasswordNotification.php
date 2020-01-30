@@ -44,12 +44,14 @@ class MailResetPasswordNotification extends ResetPassword
         }
 
 
-        $url_parts = [env('APP_FRONTEND_URL', request()->server('HTTP_HOST')), 'redefinir-senha', $this->token];
+        $url_parts = [env('MIX_APP_URL', env('APP_URL', request()->server('HTTP_HOST'))), 'redefinir-senha', $this->token];
         $url = implode('/', $url_parts);
+        $expire = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');
         return (new MailMessage)
                     ->subject('[AÇÃO NECESSÁRIA] - Redefinição de Senha Solicitada')
                     ->line('Você recebeu este email porque houve uma solicitação para redefinir a sua senha.')
                     ->action('Redefinir senha', $url)
+                    ->line("Essa solicitação irá expirar em $expire minutos.",)
                     ->line('Se você não solicitou este reset, apenas ignore este email.');
     }
 

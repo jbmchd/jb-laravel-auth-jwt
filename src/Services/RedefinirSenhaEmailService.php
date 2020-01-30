@@ -5,7 +5,7 @@ namespace JbAuthJwt\Services\Auth;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 
 use Illuminate\Support\Facades\Password;
-use JbAuthJwt\Exceptions\AuthException;
+use JbAuthJwt\Exceptions\RedefinirSenhaException;
 use JbGlobal\Repositories\PessoaRepository;
 use JbGlobal\Services\Service;
 
@@ -26,11 +26,11 @@ class RedefinirSenhaEmailService extends Service
         if ($Pessoa) {
             $result = $this->sendResetLinkEmail($Pessoa->email);
             if ($result['erro']) {
-                throw new AuthException($result['mensagem']);
+                throw new RedefinirSenhaException($result['mensagem']);
             }
-            return $result;
+            return [[],$result['mensagem']];
         } else {
-            throw new AuthException('Não foi encontrado usuário com este email');
+            throw new RedefinirSenhaException('Não foi encontrado usuário com este email');
         }
     }
 
@@ -56,11 +56,11 @@ class RedefinirSenhaEmailService extends Service
     {
         $Pessoa = $this->getUser($credentials);
         if (!$Pessoa) {
-            throw new AuthException("Usuário não encontrado.");
+            throw new RedefinirSenhaException("Usuário não encontrado.");
         }
         $token_valido = $this->broker()->tokenExists($Pessoa, $credentials['token']);
         if (! $token_valido) {
-            throw new AuthException("Token inválido ou expirado");
+            throw new RedefinirSenhaException("Token inválido ou expirado");
         }
         return true;
     }

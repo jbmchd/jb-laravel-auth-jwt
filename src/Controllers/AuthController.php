@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'senha');
         $dados = $this->servico->login($credentials);
-        $retorno = self::criarRetornoController($dados);
+        $retorno = self::criarRetornoController($dados, 'Tudo certo vamos entrar');
         return $retorno;
     }
 
@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function logout()
     {
         $dados = $this->servico->logout();
-        $retorno = self::criarRetornoController($dados);
+        $retorno = self::criarRetornoController($dados, 'Você saiu do sistema');
         return response()->json($retorno);
     }
 

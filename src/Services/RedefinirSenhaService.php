@@ -6,7 +6,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Password;
 
-use JbAuthJwt\Exceptions\AuthException;
+use JbAuthJwt\Exceptions\RedefinirSenhaException;
 use JbGlobal\Repositories\UsuarioRepository;
 use JbGlobal\Services\Service;
 use JbGlobal\Services\UsuarioService;
@@ -37,16 +37,16 @@ class RedefinirSenhaService extends Service
                 $result = $this->reset($credentials);
 
                 if ($result['erro']) {
-                    throw new AuthException($result['mensagem']);
+                    throw new RedefinirSenhaException($result['mensagem']);
                 }
 
-                $retorno = self::criarRetornoController([], $result['mensagem']);
+                $retorno = [[],$result['mensagem']];
                 return $retorno;
             } else {
-                throw new AuthException("O token fornecido não é válido.");
+                throw new RedefinirSenhaException("O token fornecido não é válido.");
             }
         } else {
-            throw new AuthException("Não foi encontrado usuário com este CPF");
+            throw new RedefinirSenhaException("Não foi encontrado usuário com este CPF");
         }
     }
 
@@ -61,7 +61,7 @@ class RedefinirSenhaService extends Service
             }
         );
 
-        return $response == Password::PASSWORD_RESET
+        return $response === Password::PASSWORD_RESET
                     ? $this->sendResetResponse()
                     : $this->sendResetFailedResponse();
     }

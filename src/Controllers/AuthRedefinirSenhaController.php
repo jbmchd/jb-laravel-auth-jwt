@@ -23,16 +23,16 @@ class AuthRedefinirSenhaController extends Controller
     {
         $email = request('email');
         $result = $this->redefinir_senha_email_servico->redefinirSenhaEmail($email);
-        $retorno = self::criarRetornoController($result);
-        return response()->json($retorno, $retorno['code']);
+        $retorno = self::criarRetornoController(...$result);
+        return response()->json($retorno);
     }
 
     public function redefinirSenha(Request $request)
     {
         $credentials = $request->only('email', 'senha', 'senha_confirmation', 'token');
         $result = $this->redefinir_senha_servico->redefinirSenha($credentials);
-        $retorno = self::criarRetornoController($result);
-        return response()->json($retorno, $retorno['code']);
+        $retorno = self::criarRetornoController(...$result);
+        return response()->json($retorno);
     }
 
     public function tokenValido(Request $request)
@@ -40,6 +40,6 @@ class AuthRedefinirSenhaController extends Controller
         $credentials = $request->only('email', 'token');
         $result = $this->redefinir_senha_email_servico->tokenValido($credentials);
         $retorno = self::criarRetornoController($result);
-        return response()->json($retorno, $retorno['code']);
+        return response()->json($retorno);
     }
 }
