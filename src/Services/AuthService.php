@@ -3,12 +3,19 @@
 namespace JbAuthJwt\Services\Auth;
 
 use JbAuthJwt\Exceptions\AuthException;
-
+use JbGlobal\Repositories\PessoaRepository;
 use JbGlobal\Services\Service;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService extends Service
 {
+    protected $pessoa_repo;
+
+    public function __construct(PessoaRepository $pessoa_repo)
+    {
+        $this->pessoa_repo = $pessoa_repo;
+    }
+
     public function login($credentials)
     {
         $credentials['password'] = $credentials['senha'];
@@ -42,6 +49,13 @@ class AuthService extends Service
     {
         auth()->logout();
         return 'Logout feito com sucesso.';
+    }
+
+    public function emailExiste($email, $ignorar_id=0)
+    {
+        return $this->validar(['email'=>$email], [
+            "email" => "required|string|email|max:255|unique:pessoas,email,$ignorar_id,id",
+        ], false);
     }
 
     public function atualizarJwtToken()

@@ -13,7 +13,7 @@ class AuthController extends Controller
 
     public function __construct(AuthService $servico)
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','emailExiste']]);
         $this->servico = $servico;
     }
 
@@ -43,6 +43,16 @@ class AuthController extends Controller
     {
         $novo_token = $this->servico->atualizarJwtToken();
         $retorno = self::criarRetornoController($novo_token, 'Token atualizado com sucesso.');
+        return response()->json($retorno);
+    }
+
+    public function emailExiste(Request $request)
+    {
+        $email = $request->get('email');
+        $ignore_id = $request->get('ignore_id') ?? 0;
+
+        $result = $this->servico->emailExiste($email, $ignore_id);
+        $retorno = self::criarRetornoController($result);
         return response()->json($retorno);
     }
 }
