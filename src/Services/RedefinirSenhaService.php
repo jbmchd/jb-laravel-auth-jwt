@@ -26,6 +26,27 @@ class RedefinirSenhaService extends Service
         $this->usuario_repo = $usuario_repo;
     }
 
+    public function redefinirSenhaAuth(array $credentials)
+    {
+        $Pessoa = auth()->user();
+        if ($Pessoa) {
+            $credentials['email'] = $Pessoa->email;
+
+            $this->validarRedefinicaoSenha($credentials, false);
+
+            $result = $this->resetPassword($Pessoa, $credentials['senha']);
+
+            if ($result['erro']) {
+                throw new RedefinirSenhaException($result['mensagem']);
+            }
+
+            $retorno = [!$result['erro'],$result['mensagem']];
+            return $retorno;
+        } else {
+            throw new RedefinirSenhaException("Não foi encontrado usuário com este CPF");
+        }
+    }
+
     public function redefinirSenha(array $credentials)
     {
         $Pessoa = $this->broker()->getUser(['email'=>$credentials['email']]);
@@ -35,7 +56,7 @@ class RedefinirSenhaService extends Service
                 $credentials['email'] = $Pessoa->email;
 
                 $result = $this->reset($credentials);
-
+                dd('result', $result);
                 if ($result['erro']) {
                     throw new RedefinirSenhaException($result['mensagem']);
                 }
@@ -46,24 +67,22 @@ class RedefinirSenhaService extends Service
                 throw new RedefinirSenhaException("O token fornecido não é válido.");
             }
         } else {
-            throw new RedefinirSenhaException("Não foi encontrado usuário com este CPF");
+            throw new RedefinirSenhaException("Não foi encontrado usuário com este email");
         }
     }
 
     public function reset(array $credentials)
     {
-        $this->validar($credentials, $this->rules());
+        $this->validarRedefinicaoSenha($credentials, true);
 
-        $response = $this->broker()->reset(
+        $password_const = $this->broker()->reset(
             $credentials,
             function ($user, $senha) {
-                $this->resetPassword($user, $senha);
+                return $this->resetPassword($user, $senha);
             }
         );
 
-        return $response === Password::PASSWORD_RESET
-                    ? $this->sendResetResponse()
-                    : $this->sendResetFailedResponse();
+        return $this->getResponse($password_const);
     }
 
     public function resetPassword($user, $senha)
@@ -71,7 +90,11 @@ class RedefinirSenhaService extends Service
         $usuario_id = $user->usuario->id;
         $senha_hash = $this->usuario_servico->criarSenha($senha);
         $this->usuario_repo->alterarSenha($usuario_id, $senha_hash);
-        event(new PasswordReset($user));
+
+        $result = new PasswordReset($user);
+        $password_const = $result instanceof \Illuminate\Auth\Events\PasswordReset ? Password::PASSWORD_RESET : false;
+
+        return $this->getResponse($password_const);
     }
 
     public function sendResetResponse()
@@ -84,12 +107,40 @@ class RedefinirSenhaService extends Service
         return ['erro'=>true, 'mensagem'=>'Falha ao redefinir senha.'];
     }
 
-    public function rules()
+    public function getResponse($password_const){
+        return $password_const === Password::PASSWORD_RESET
+                    ? $this->sendResetResponse()
+                    : $this->sendResetFailedResponse();
+    }
+
+    public function validarRedefinicaoSenha($credentials, $token_obrigatorio){
+        $this->validar($credentials, $this->rules($token_obrigatorio));
+
+        if(!$token_obrigatorio){
+            if (!(\Illuminate\Support\Facades\Hash::check($credentials['senha_atual'], auth()->user()->usuario->senha))) {
+                // Verifica senha atual
+                throw new RedefinirSenhaException('A senha atual está incorreta');
+            }
+            if(strcmp($credentials['senha_atual'], $credentials['senha']) == 0){
+                //Senha atual e nova são iguais
+                throw new RedefinirSenhaException('Sua nova senha e senha atual são as mesmas, nada foi alterado.');
+            }
+        }
+
+        return true;
+    }
+
+    public function rules($token_obrigatorio=true)
     {
-        return [
-            'token' => 'required',
+        $regras = [
             'email' => 'required|email',
             'senha' => 'required|confirmed|min:6',
         ];
+
+        if($token_obrigatorio){
+            $regras = array_merge($regras, ['token' => 'required']);
+        }
+
+        return $regras;
     }
 }

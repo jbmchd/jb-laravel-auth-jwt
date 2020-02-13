@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function logout()
     {
         $dados = $this->servico->logout();
-        $retorno = self::criarRetornoController($dados, 'Você saiu do sistema');
+        $retorno = self::criarRetornoController($dados, 'VocÃª saiu do sistema');
         return response()->json($retorno);
     }
 

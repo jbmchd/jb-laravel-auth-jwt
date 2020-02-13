@@ -22,7 +22,7 @@ class RedefinirSenhaEmailService extends Service
 
     public function redefinirSenhaEmail($email)
     {
-        $Pessoa = $this->pessoa_repo->encontrarPor('email',$email);
+        $Pessoa = $this->pessoa_repo->buscarPor('email',$email);
         if ($Pessoa) {
             $result = $this->sendResetLinkEmail($Pessoa->email);
             if ($result['erro']) {

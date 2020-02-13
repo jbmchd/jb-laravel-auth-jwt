@@ -29,9 +29,19 @@ class AuthRedefinirSenhaController extends Controller
 
     public function redefinirSenha(Request $request)
     {
-        $credentials = $request->only('email', 'senha', 'senha_confirmation', 'token');
-        $result = $this->redefinir_senha_servico->redefinirSenha($credentials);
+        $auth_user = auth()->user();
+        if($auth_user){
+            $credentials = $request->only('email', 'senha_atual', 'senha', 'senha_confirmation');
+            if($auth_user->email == $credentials['email']){
+                $result =  $this->redefinir_senha_servico->redefinirSenhaAuth($credentials);
+            }
+        }
+        else {
+            $credentials = $request->only('email', 'senha', 'senha_confirmation', 'token');
+            $result =  $this->redefinir_senha_servico->redefinirSenha($credentials);
+        }
         $retorno = self::criarRetornoController(...$result);
+
         return response()->json($retorno);
     }
 
