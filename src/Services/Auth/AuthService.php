@@ -3,7 +3,7 @@
 namespace JbAuthJwt\Services\Auth;
 
 use JbAuthJwt\Exceptions\AuthException;
-use JbGlobal\Repositories\PessoaRepository;
+use JbGlobal\Repositories\Pessoas\PessoaRepository as Repository;
 use JbGlobal\Services\Service;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -11,7 +11,7 @@ class AuthService extends Service
 {
     protected $pessoa_repo;
 
-    public function __construct(PessoaRepository $pessoa_repo)
+    public function __construct(Repository $pessoa_repo)
     {
         $this->pessoa_repo = $pessoa_repo;
     }

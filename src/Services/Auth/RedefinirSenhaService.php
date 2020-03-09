@@ -7,9 +7,9 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Password;
 
 use JbAuthJwt\Exceptions\RedefinirSenhaException;
-use JbGlobal\Repositories\UsuarioRepository;
+use JbGlobal\Repositories\Pessoas\UsuarioRepository;
+use JbGlobal\Services\Pessoas\UsuarioService;
 use JbGlobal\Services\Service;
-use JbGlobal\Services\UsuarioService;
 
 class RedefinirSenhaService extends Service
 {
@@ -19,11 +19,12 @@ class RedefinirSenhaService extends Service
     protected $usuario_servico;
     protected $redefinir_senha_email_servico;
 
+    // public function __construct(RedefinirSenhaEmailService $redefinir_senha_email_servico, UsuarioService $usuario_servico, UsuarioRepository $usuario_repo)
     public function __construct(RedefinirSenhaEmailService $redefinir_senha_email_servico, UsuarioService $usuario_servico, UsuarioRepository $usuario_repo)
     {
-        $this->redefinir_senha_email_servico = $redefinir_senha_email_servico;
-        $this->usuario_servico = $usuario_servico;
-        $this->usuario_repo = $usuario_repo;
+        // $this->redefinir_senha_email_servico = $redefinir_senha_email_servico;
+        // $this->usuario_servico = $usuario_servico;
+        // $this->usuario_repo = $usuario_repo;
     }
 
     public function redefinirSenhaAuth(array $credentials)
@@ -56,7 +57,6 @@ class RedefinirSenhaService extends Service
                 $credentials['email'] = $Pessoa->email;
 
                 $result = $this->reset($credentials);
-                dd('result', $result);
                 if ($result['erro']) {
                     throw new RedefinirSenhaException($result['mensagem']);
                 }

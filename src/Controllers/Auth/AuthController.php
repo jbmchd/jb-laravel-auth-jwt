@@ -1,6 +1,6 @@
 <?php
 
-namespace JbAuthJwt\Controllers;
+namespace JbAuthJwt\Controllers\Auth;
 
 use JbAuthJwt\Services\Auth\AuthService;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class AuthController extends Controller
     public function __construct(AuthService $servico)
     {
         $this->middleware('auth:api', ['except' => ['login','emailExiste']]);
-        $this->servico = $servico;
+        parent::__construct($servico);
     }
 
     public function login(Request $request)
@@ -36,14 +36,14 @@ class AuthController extends Controller
     {
         $dados = $this->servico->logout();
         $retorno = self::criarRetornoController($dados, 'Você saiu do sistema');
-        return response()->json($retorno);
+        return $retorno;
     }
 
     public function refresh()
     {
         $novo_token = $this->servico->atualizarJwtToken();
         $retorno = self::criarRetornoController($novo_token, 'Token atualizado com sucesso.');
-        return response()->json($retorno);
+        return $retorno;
     }
 
     public function emailExiste(Request $request)
@@ -53,6 +53,6 @@ class AuthController extends Controller
 
         $result = $this->servico->emailExiste($email, $ignore_id);
         $retorno = self::criarRetornoController($result);
-        return response()->json($retorno);
+        return $retorno;
     }
 }

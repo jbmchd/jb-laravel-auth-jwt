@@ -10,7 +10,6 @@ class RouteServiceProvider extends ServiceProvider
     public function map()
     {
         $this->mapApiAuthRoutes();
-        $this->mapApiRedefinirSenhaRoutes();
     }
 
     private function getNamespace($complemento = null)
@@ -20,11 +19,7 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapApiAuthRoutes()
     {
-        Route::prefix('api')->middleware(['api'])->namespace($this->getNamespace())->group(base_path('routes/api/auth.php'));
-    }
-
-    protected function mapApiRedefinirSenhaRoutes()
-    {
-        Route::prefix('api')->middleware(['api'])->namespace($this->getNamespace())->group(base_path('routes/api/redefinir-senha.php'));
+        Route::prefix('api')->middleware(['api'])->namespace($this->getNamespace('Auth'))->group(base_path('routes/api/auth/auth.php'));
+        Route::prefix('api')->middleware(['api'])->namespace($this->getNamespace('Auth'))->group(base_path('routes/api/auth/redefinir-senha.php'));
     }
 }

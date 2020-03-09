@@ -1,6 +1,6 @@
 <?php
 
-namespace JbAuthJwt\Controllers;
+namespace JbAuthJwt\Controllers\Auth;
 
 use JbAuthJwt\Services\Auth\RedefinirSenhaEmailService;
 use JbAuthJwt\Services\Auth\RedefinirSenhaService;

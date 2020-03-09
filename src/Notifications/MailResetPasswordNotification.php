@@ -43,7 +43,6 @@ class MailResetPasswordNotification extends ResetPassword
             return call_user_func(static::$toMailCallback, $notifiable, $this->token);
         }
 
-
         $url_parts = [env('MIX_APP_URL', env('APP_URL', request()->server('HTTP_HOST'))), 'redefinir-senha', $this->token];
         $url = implode('/', $url_parts);
         $expire = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');

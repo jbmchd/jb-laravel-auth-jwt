@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 
 use Illuminate\Support\Facades\Password;
 use JbAuthJwt\Exceptions\RedefinirSenhaException;
-use JbGlobal\Repositories\PessoaRepository;
+use JbGlobal\Repositories\Pessoas\PessoaRepository as Repository;
 use JbGlobal\Services\Service;
 
 class RedefinirSenhaEmailService extends Service
@@ -15,16 +15,16 @@ class RedefinirSenhaEmailService extends Service
 
     protected $pessoa_repo;
 
-    public function __construct(PessoaRepository $pessoa_repo)
+    public function __construct(Repository $pessoa_repo)
     {
         $this->pessoa_repo = $pessoa_repo;
     }
 
     public function redefinirSenhaEmail($email)
     {
-        $Pessoa = $this->pessoa_repo->buscarPor('email',$email);
-        if ($Pessoa) {
-            $result = $this->sendResetLinkEmail($Pessoa->email);
+        $pessoa = $this->pessoa_repo->encontrarPor('email',$email);
+        if ($pessoa) {
+            $result = $this->sendResetLinkEmail($pessoa->email);
             if ($result['erro']) {
                 throw new RedefinirSenhaException($result['mensagem']);
             }
@@ -54,11 +54,11 @@ class RedefinirSenhaEmailService extends Service
 
     public function tokenValido(array $credentials)
     {
-        $Pessoa = $this->getUser($credentials);
-        if (!$Pessoa) {
+        $pessoa = $this->getUser($credentials);
+        if (!$pessoa) {
             throw new RedefinirSenhaException("Usuário não encontrado.");
         }
-        $token_valido = $this->broker()->tokenExists($Pessoa, $credentials['token']);
+        $token_valido = $this->broker()->tokenExists($pessoa, $credentials['token']);
         if (! $token_valido) {
             throw new RedefinirSenhaException("Token inválido ou expirado");
         }
