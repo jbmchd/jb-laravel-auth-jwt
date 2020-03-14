@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Providers;
+namespace JbAuthJwt\Providers;
 
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use JbGlobal\Providers\RouteServiceProvider as JbGlobalServiceProvider;
 
-class RouteServiceProvider extends ServiceProvider
+class RouteServiceProvider extends JbGlobalServiceProvider
 {
-    public function map()
+    public function boot()
     {
-        $this->mapApiAuthRoutes();
+        parent::boot();
     }
 
-    private function getNamespace($complemento = null)
+    public function map()
     {
-        return $complemento ? "$this->namespace\\$complemento" : $this->namespace;
+        parent::map();
+        $this->mapApiAuthRoutes();
     }
 
     protected function mapApiAuthRoutes()
