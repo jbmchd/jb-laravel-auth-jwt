@@ -3,17 +3,19 @@
 namespace JbAuthJwt\Services\Auth;
 
 use JbAuthJwt\Exceptions\AuthException;
-use JbGlobal\Repositories\Pessoas\PessoaRepository as Repository;
+use JbGlobal\Repositories\Repository;
 use JbGlobal\Services\Service;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService extends Service
 {
-    protected $pessoa_repo;
+    protected $pessoa_repositorio;
+    protected $sessao_servico;
 
-    public function __construct(Repository $pessoa_repo)
+    public function __construct(Repository $pessoa_repositorio, Service $sessao_servico)
     {
-        $this->pessoa_repo = $pessoa_repo;
+        $this->pessoa_repositorio = $pessoa_repositorio;
+        $this->sessao_servico = $sessao_servico;
     }
 
     public function login($credentials)
@@ -22,7 +24,11 @@ class AuthService extends Service
         unset($credentials['senha']);
         $token = JWTAuth::attempt($credentials);
         if ($token) {
-            $me = $this->me();
+            $me = $this->me(false);
+            if($this->sessao_servico){
+                $this->sessao_servico->iniciarSessaoAuth();
+            }
+            $me = $me->toArray();
             $dados = array_merge(['token'=> $token], ['pessoa'=>$me]);
         } else {
             throw new AuthException("Credenciais inválidas");
@@ -47,6 +53,7 @@ class AuthService extends Service
 
     public function logout()
     {
+        self::session([]);
         auth()->logout();
         return 'Logout feito com sucesso.';
     }

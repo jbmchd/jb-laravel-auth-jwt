@@ -2,7 +2,7 @@
 namespace JbAuthJwt\Auth;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use JbAuthJwt\Auth\User as Authenticatable;
 use JbAuthJwt\Notifications\MailResetPasswordNotification;
 use JbGlobal\Models\PasswordReset;
 use Tymon\JWTAuth\Contracts\JWTSubject;

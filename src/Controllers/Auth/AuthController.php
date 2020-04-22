@@ -9,8 +9,6 @@ use JbGlobal\Controllers\Controller;
 
 class AuthController extends Controller
 {
-    protected $servico;
-
     public function __construct(AuthService $servico)
     {
         $this->middleware('auth:api', ['except' => ['login','emailExiste']]);
