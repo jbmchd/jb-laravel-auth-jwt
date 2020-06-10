@@ -8,7 +8,7 @@ use JbGlobal\Traits\TSessao;
 class SessaoService extends JbGlobalSessaoService  {
     use TSessao;
 
-    public static function iniciarSessaoAuth($dados = []){
+    public static function iniciarSessaoAuth($dados=[]){
         $pessoa = auth()->user();
 
         $usuario = $pessoa->usuario->toArray();

@@ -16,6 +16,7 @@ class VerificarPapelUsuario
             throw new AuthException("Você não tem permissão para acessar esse recurso.");
 
         }
+
         return $next($request);
     }
 

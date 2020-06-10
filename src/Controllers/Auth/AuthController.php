@@ -64,6 +64,7 @@ class AuthController extends Controller
     public function pegarJwtToken()
     {
         return $this->servico->pegarJwtToken();
+
         // $dados = $this->servico->pegarJwtToken();
         // $retorno = self::criarRetornoController($dados);
         // return $retorno;
