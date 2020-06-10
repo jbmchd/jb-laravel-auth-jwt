@@ -30,6 +30,13 @@ class AuthController extends Controller
         return $retorno;
     }
 
+    public function auth()
+    {
+        $dados = $this->servico->auth();
+        $retorno = self::criarRetornoController($dados);
+        return $retorno;
+    }
+
     public function logout()
     {
         $dados = $this->servico->logout();
@@ -52,5 +59,13 @@ class AuthController extends Controller
         $result = $this->servico->emailExiste($email, $ignore_id);
         $retorno = self::criarRetornoController($result);
         return $retorno;
+    }
+
+    public function pegarJwtToken()
+    {
+        return $this->servico->pegarJwtToken();
+        // $dados = $this->servico->pegarJwtToken();
+        // $retorno = self::criarRetornoController($dados);
+        // return $retorno;
     }
 }

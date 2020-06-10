@@ -15,12 +15,17 @@ class SessaoService extends JbGlobalSessaoService  {
         $pessoa = $pessoa->toArray();
         unset($pessoa['usuario']);
 
-        $sessao_inicial = array_merge([
-            'auth' => [
-                'pessoa' => $pessoa,
-                'usuario' => $usuario,
-            ]
-        ], $dados);
+        $auth = [
+            'pessoa' => $pessoa,
+            'usuario' => $usuario,
+        ];
+
+        if(isset($dados['auth'])){
+            $auth = array_merge($auth, $dados['auth']);
+            unset($dados['auth']);
+        }
+
+        $sessao_inicial = array_merge(['auth'=>$auth], $dados);
 
         //iniciar sessão
         self::session($sessao_inicial);
