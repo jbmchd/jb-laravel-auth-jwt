@@ -29,11 +29,11 @@ class AuthService extends Service
                 $this->sessao_servico->iniciarSessaoAuth();
             }
             $me = $me->toArray();
-            $dados = array_merge(['token'=> $token], ['pessoa'=>$me]);
+            $dados = array_merge(['token'=> $token], ['me'=>$me, 'auth'=>self::session('auth')]);
         } else {
             throw new AuthException("Credenciais inválidas");
         }
-        $dados = array_merge(['token'=> $token], ['pessoa'=>$me]);
+        $dados = array_merge(['token'=> $token], ['me'=>$me, 'auth'=>self::session('auth')]);
         return $dados;
     }
 
@@ -56,6 +56,11 @@ class AuthService extends Service
         self::session([]);
         auth()->logout();
         return 'Logout feito com sucesso.';
+    }
+
+    public function auth()
+    {
+        return self::session('auth');
     }
 
     public function emailExiste($email, $ignorar_id=0)
